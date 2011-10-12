@@ -1,0 +1,14 @@
+Some simple Unix hacks that may or may not be useful.
+
+For the most part, they are clones of various utilities found on some
+commercial implementations of Unix.
+
+  line     - Same as your regular line (reads one line) but has support
+             for timeouts.
+
+  rawline  - Same as `line' above, but puts the terminal into raw mode
+             before doing the read.
+
+  ttytype  - Basic terminal identification routines.  Detects various ANSI,
+             HP, and Wyse terminals.
+

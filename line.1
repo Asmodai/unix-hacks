@@ -1,0 +1,65 @@
+.\" Hey Emacs, this file is -*- Mode: nroff -*-
+.\"   Title: line.1
+.\"  Author: Paul Ward
+.\" License: GPLv3
+.\"
+.TH "LINE" "1" "9 April 2011" "Unix" "User Commands"
+.SH NAME
+line \- read one line
+.SH SYNOPSIS
+.B line
+[\fB-t \fItimeout\fR]
+.SH DESCRIPTION
+The utlity \fBline\fR copies one line (up to a newline) from standard
+input to standard output. It always prints at least a newline and
+returns an exit status of 1 on EOF or read error.
+.PP
+The \fBLC_CTYPE\fR environment variable defines the processing of the
+codesets used in the input file.
+.SS Options
+\fBline\fR recognises the following command-line option:
+.RS
+.TP 12
+\fB\-t\fR \fItimeout\fR
+Timeout after \fItimeout\fR seconds, where \fItimeout\fR is an integer
+value (if a non-integer value is specified, it is converted to an
+integer; i.e., rounded down). A blank is required between \fB-t\fR and
+the \fItimeout\fR argument.
+
+This option is not documented in POSIX
+and other industry standards, and should \fBnot\fR be used in portable
+applications.
+.SH EXAMPLES
+The following lines in a shell script prompt for a file name and display
+information about the file:
+.in +4n
+.nf
+
+echo -n 'Enter a file name:'
+reply=`line`
+ls -l $reply
+
+.fi
+.in
+To limit the response time to 10 seconds, use the form:
+.in +4n
+.nf
+
+reply=`line -t 10`
+
+.fi
+.in
+then test for no response.  If no response before the timeout expires, a
+default behaviour should be provided.
+.SH "AUTHOR"
+Paul Ward <asmodai@gmail.com>
+.PP
+This instance of \fBline\fR is based on a version created by HP for HP-UX
+10.20.
+.SH "SEE ALSO"
+.BR read (1)
+.BR sh (1)
+.SH STANDARDS
+The \fBline\fR utility is listed in SVID2, SVID3, SVID4, XPG2 and
+XPG3. It is not covered in IEEE Std. 1003.1. The \fB-t\fR flag is an
+extension to the standard.

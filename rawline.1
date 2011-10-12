@@ -1,0 +1,60 @@
+.\" Hey Emacs, this file is -*- Mode: nroff -*-
+.\"   Title: line.1
+.\"  Author: Paul Ward
+.\" License: GPLv3
+.\"
+.TH "RAWLINE" "1" "9 April 2011" "Unix" "User Commands"
+.SH NAME
+rawline \- read one line in raw mode
+.SH SYNOPSIS
+.B rawline
+[\fB-t\fR \fItimeout\fR]
+.SH DESCRIPTION
+The utlity \fBrawline\fR copies one line (up to a newline) from
+standard input to standard output.It always prints at least a newline
+and returns an exit status of 1 on EOF or read error.
+.PP
+The \fBrawline\fR utility sets the terminal to ``raw'' mode before
+waiting for input. The only way to interrupt the utility in this state
+is to send it EOF.
+.PP
+The \fBLC_CTYPE\fR environment variable defines the processing of the
+codesets used in the input file.
+.SS Options
+.B rawline
+recognises the following command-line option:
+.RS
+.TP 12
+\fB\-t\fR \fItimeout\fR
+Timeout after \fItimeout\fR seconds, where \fItimeout\fR is an integer
+value (if a non-integer value is specified, it is converted to an
+integer; i.e., rounded down).  A blank is required between \fB-t\fR
+and the \fItimeout\fR argument.
+.SH EXAMPLES
+The following lines in a shell script prompt for a file name and
+display information about the file:
+.in +4n
+.nf
+
+echo -n 'Enter a file name:'
+reply=`rawline`
+ls -l $reply
+
+.fi
+.in
+To limit the response time to 10 seconds, use the form:
+.in +4n
+.nf
+
+reply=`rawline -t 10`
+
+.fi
+.in
+then test for no response.  If no response before the timeout expires, a
+default behaviour should be provided.
+.SH "AUTHOR"
+Paul Ward <asmodai@gmail.com>
+.SH "SEE ALSO"
+.BR line (1)
+.BR read (1)
+.BR sh (1)

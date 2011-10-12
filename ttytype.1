@@ -1,0 +1,188 @@
+.\" Hey Emacs, this file is -*- Mode: nroff -*-
+.\"   Title: ttytype.1
+.\"  Author: Paul Ward
+.\" License: GPLv3
+.\"
+.TH "ttytype" "1" "9 April 2011" "Unix" "User Commands"
+.SH NAME
+ttytype \- terminal identification program
+.SH SYNOPSIS
+.B ttytype
+[\fB-apsv\fR] [\fB-t\fR \fItype\fR]
+.SH DESCRIPTION
+\fBttytype\fR automatically identifies the current terminal type by
+sending an identification request sequence to the terminal.  This
+method works for local, modem, and remote terminal connections, as
+well as for \fIhpterm\fR and \fIxterm\fR-based terminal emulators.
+.PP
+Once the terminal has been identified, \fBttytype\fR prints the
+terminal's type to the standard output. This string is usually used as
+the value for the \fBTERM\fR environment variable.
+.PP
+If \fBttytype \fR is unable to determine the correct terminal type, it
+prompts the user for the correct terminal identification string.
+.SS Options
+\fBttytype\fR recognises the following command-line option:
+.RS
+.TP 12
+\fB\-a\fR
+Causes \fBttytype\fR to return an ID of "unknown" instead of
+prompting for the terminal type if auto-identification fails.  If this
+option is not present, \fBttytype\fR interactively prompts the user
+for the terminal type if it is unable to determine the correct type
+automatically.
+.TP 12
+\fB-p\fR
+Causes \fBttytype\fR to prompt for the terminal type before it sends
+the terminal identification request sequence.  If the user responds
+with only a carriage return, \fBttytype\fR proceeds with the automatic
+terminal identification process.  Any other response is taken as the
+correct terminal type.  Note that the \fBLINES\fR and \fBCOLUMNS\fR
+variables are not set if the user manually enters a terminal type.
+
+The \fB-p\fR option is normally used only for terminals that do not
+behave well when presented with \fBttytype\fR's terminal
+identification request sequence.  It gives the user a chance to
+respond with the correct terminal type before any escape sequences are
+sent that could have an adverse effect on the terminal.
+
+The \fB-a\fR option can be used in conjunction with the \fB-p\fR
+option.  The \fB-a\fR option only inhibits interactive prompting after
+\fBttytype\fR has failed to identify the terminal by other means.
+.TP 12
+\fB-s\fR
+Tells \fBttytype\fR to print a series of shell commands to set the
+\fBTERM\fR, \fBLINES\fR, and \fBCOLUMNS\fR environment variables to
+appropriate values.  In addition, the variable \fBERASE\fR is set to
+the terminal control sequence representing the appropriate erase
+character for the terminal (\fIDEL\fR for ANSI/ECMA terminals,
+\fBbackspace\fR for all others).  This control sequence can then be
+used as an argument to \fBstty\fR or \fBtset\fR.
+
+The \fBSHELL\fR environment variable is consulted to see which shell
+syntax to use for setting the environment variables.  The output is
+normally used with a command of the form:
+.in +4n
+.nf
+
+eval `ttytype -s`
+
+.fi
+.in
+.TP 12
+\fB-t\fR \fItype\fR
+\fBttytype\fR normally attempts identification of Wyse, ANSI/ECMA, and
+HP terminals.  The \fItype\fR argument can be used to restrict the
+inquiry to that required for terminals of the specified type.  The
+accepted types are \fBansi\fR, \fBhp\fR, and \fBwyse\fR.  Multiple
+\fB-t\fR options can be specified.
+.TP 12
+\fB-v\fR
+Enable verbose messages to standard error.
+.SH EXAMPLES
+The following shell script fragment can be used during login shell
+initialisation to detect the connecting terminal type:
+.in +4n
+.nf
+
+#
+# If TERM is not set, see if our port is listed in /etc/ttys or
+# equivalent.  If /etc/ttys doesn't have information for our port,
+# run ttytype(1) to try to determine the type of terminal we have.
+#
+# To have ttytype(1) prompt for the terminal type before trying to
+# automatically identify the terminal, add the '-p' option to
+# the 'ttytype -s' command below.
+#
+if [ -z "$TERM" -o "$TERM" = network ]; then
+    unset TERM
+    eval `tset -s -Q`
+    if [ -z "$TERM" -o "$TERM" = unknown]; then
+        eval `ttytype -s`
+        tset -Q -e ${ERASE:-\\^h} $TERM
+    fi
+fi
+
+.fi
+.in
+.SH "NOTES"
+The use of the \fB-s\fR option is highly recommended because many
+terminals support variable-size displays.  This option provides the
+only means for automatically configuring the user environment in such
+a manner that applications can handle these terminals correctly.  Note
+that \fBLINES\fR and \fBCOLUMNS\fR are not set if the \fB-p\fR option
+is used and the user manually enters a terminal type.
+.PP
+The following steps are performed in the order indicated when
+identifying a terminal:
+.RS
+.TP 3
+1.
+\fBttytype\fR tries the Wyse 30/50/60 id request sequence
+.TP
+2.
+\fBttytype\fR tries the standard ANSI/ECMA/DEC id request sequence.
+If a response is received, it is converted to a string according to an
+internal table.
+.TP
+3.
+\fBttytype\fR tries the HP id request sequence.
+.TP
+4.
+If none of the above steps succeed, \fBttytype\fR prompts
+interactively for the correct terminal type, unless the \fB-a\fR
+option has been given.
+.RE
+.PP
+\fBttytype\fR may skip one or more of the first three steps, depending
+on the presence of \fB-t\fR options.
+.PP
+The HP id request sequence can switch some ANSI terminals into an
+unexpected operating mode.  Recovery from such a condition requires
+cycling power on a physical terminal, or initiating a hard reset on a
+terminal emulator.
+To avoid this problem, \fBttytype\fR always sends the HP
+identification sequence last.
+.SH "WARNINGS"
+The terminal identification sequences sent by \fBttytype\fR can cause
+unexpected behavior on terminals other than the Wyse 30/40/50,
+standard ANSI/ECMA/DEC, or HP terminals.  If you have such terminals
+in your configuration, use the \fB-t\fR or \fB-p\fR options to prevent
+\fBttytype\fR from sending sequences that cause unexpected behaviour.
+.PP
+In regard to terminal emulators, \fBttytype\fR only goes by the
+results of the terminal identification sequence.  Some terminal
+emulators respond with either DEC VT100 or VT102 id values, but may
+have a more complete entry for that specific terminal emulator in
+either termcap or terminfo.  You may lose certain terminal emulator
+functionality due to the \fBTERM\fR environment being set to "vt100"
+or "vt102".  Should this happen, you will want to fall back on
+.in +4n
+.nf
+
+tset -s -Q
+
+.fi
+.in
+to use the TERM environment variable set by the terminal emulator
+itself (see the snipped in examples above).
+.PP
+Although I have attempted to make \fBttytype\fR as complete as
+possible in regards to DEC terminals, it might get things wrong.
+.SH "AUTHOR"
+Paul Ward <asmodai@gmail.com>
+.PP
+\fBttytype\fR was originally developed by HP for use on the HP-UX
+operating system.  This instance of \fBttytype\fR is a clean write
+based on the behaviour of \fBttytype\fR on HP-UX 10.20.
+.SH "SEE ALSO"
+.BR csh (1)
+.BR ksh (1)
+.BR tcsh (1)
+.BR sh (1)
+.BR bash (1)
+.BR stty (1)
+.BR ttys (4)
+.BR ttys (5)
+.BR environ (5)
+.BR environ (7)
