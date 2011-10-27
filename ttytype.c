@@ -488,7 +488,7 @@ rawread(char *buf, size_t size, const char *fmt, ...)
 
   /* Set up the timeout. */
   tout.tv_sec = 0;
-  tout.tv_usec = 50000;
+  tout.tv_usec = 80000;
 
   /* Set up the file descriptors for select(). */
   FD_ZERO(&fs);
