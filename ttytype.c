@@ -487,8 +487,8 @@ rawread(char *buf, size_t size, const char *fmt, ...)
   vasprintf(&tmp, fmt, ap);
 
   /* Set up the timeout. */
-  tout.tv_sec = 0;
-  tout.tv_usec = 80000;
+  tout.tv_sec = 1;
+  tout.tv_usec = 0;
 
   /* Set up the file descriptors for select(). */
   FD_ZERO(&fs);
