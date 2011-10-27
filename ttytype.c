@@ -3,8 +3,8 @@
  *
  * Copyright (c) 2011 Paul Ward <asmodai@gmail.com>
  *
- * Time-stamp: <Tuesday Oct 11, 2011 10:34:25 asmodai>
- * Revision:   182
+ * Time-stamp: <Thursday Oct 27, 2011 15:17:27 asmodai>
+ * Revision:   187
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -746,6 +746,11 @@ identHP(void)
      * terminal.  I do not have any real HP terminals that I can test
      * for responses, so this is using Blind Guesses(tm).
      */
+
+    if (!isalnum(term[size])) {
+      size--;
+    }
+
     strncpy(term, result, size);
     gotTerm = TRUE;
     termType = TERM_HP;
