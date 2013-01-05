@@ -4,8 +4,8 @@
 #
 # Copyright (c) 2011 Paul Ward <asmodai@gmail.com>
 #
-# Time-stamp: <Tuesday Oct 11, 2011 10:54:58 asmodai>
-# Revision:   2
+# Time-stamp: <Saturday Jan  5, 2013 11:02:54 asmodai>
+# Revision:   3
 #
 # Author:     Paul Ward <asmodai@gmail.com>
 # Maintainer: Paul Ward <asmodai@gmail.com>
@@ -45,12 +45,14 @@ CFLAGS=-Wall -pedantic -O2
 ttytype_OBJS=ttytype.o
 line_OBJS=line.o
 rawline_OBJS=rawline.o
+jot_OBJS=jot.o
 
 ttytype_BIN=ttytype
 line_BIN=line
 rawline_BIN=rawline
+jot_BIN=jot
 
-all: ttytype line rawline
+all: ttytype line rawline jot
 
 ttytype: $(ttytype_OBJS)
 	$(CC) $(CFLAGS) $(ttytype_OBJS) -o $(ttytype_BIN)
@@ -61,13 +63,17 @@ line: $(line_OBJS)
 rawline: $(rawline_OBJS)
 	$(CC) $(CFLAGS) $(rawline_OBJS) -o $(rawline_BIN)
 
+jot: $(jot_OBJS)
+	$(CC) $(CFLAGS) $(jot_OBJS) -o $(jot_BIN)
+
 strip: ttytype line rawline
 	$(STRIP) $(ttytype_BIN); \
 	$(STRIP) $(line_BIN); \
-	$(STRIP) $(rawline_BIN)
+	$(STRIP) $(rawline_BIN); \
+	$(STRIP) $(jot_BIN)
 
 clean:
-	$(RM) *.o *~ $(ttytype_BIN) $(line_BIN) $(rawline_BIN)
+	$(RM) *.o *~ $(ttytype_BIN) $(line_BIN) $(rawline_BIN) $(jot_BIN)
 
 # Makefile ends here
 

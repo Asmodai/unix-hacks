@@ -12,3 +12,5 @@ commercial implementations of Unix.
   ttytype  - Basic terminal identification routines.  Detects various ANSI,
              HP, and Wyse terminals.
 
+  jot      - A portable modification of BSD's `jot' utility.
+
