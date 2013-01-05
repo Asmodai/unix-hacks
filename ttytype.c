@@ -3,8 +3,8 @@
  *
  * Copyright (c) 2011 Paul Ward <asmodai@gmail.com>
  *
- * Time-stamp: <Thursday Oct 27, 2011 15:17:27 asmodai>
- * Revision:   187
+ * Time-stamp: <Saturday Jan  5, 2013 11:05:21 asmodai>
+ * Revision:   189
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -34,6 +34,8 @@
  */
 /* }}} */
 
+/* Just to be sure. */
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -49,7 +51,7 @@
 #include <sys/ioctl.h>
 
 /* ================================================================== */
-/* {{{ Definitions: */
+/* {{{ definitions: */
 
 #ifndef FALSE
 # define FALSE        0
