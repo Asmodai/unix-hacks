@@ -1,0 +1,75 @@
+.\" -*- Mode: nroff -*-
+.\"
+.\" uname.1 --- `uname` manual page.
+.\"
+.\" Copyright (c) 2016 Paul Ward <asmodai@gmail.com>
+.\"
+.\" Author:     Paul Ward <asmodai@gmail.com>
+.\" Maintainer: Paul Ward <asmodai@gmail.com>
+.\" Created:    11 Dec 2016 14:38:20
+.\"
+.\" Redistributions of source code must retain the above copyright notice,
+.\" this list of conditions and the following disclaimer.
+.\"
+.\" Redistributions in binary form must reproduce the above copyright
+.\" notice, this list of conditions and the following disclaimer in the
+.\" documentation and/or other materials provided with the distribution.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+.\" IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+.\" TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+.\" PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+.\" OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+.\" EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+.\" PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+.\" PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+.\" LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+.\" NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+.\" SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.TH UNAME 1 "December 11, 2016"
+.UC
+.SH NAME
+uname \- print operating system name
+.SH SYNOPSIS
+.B uname
+[
+.B \-amprsv
+]
+.br
+.SH DESCRIPTION
+The
+.I uname
+utility writes symbols representing on or more system characteristics
+to the standard output.
+.PP
+The following options are available:
+.TP
+.B \-a
+Behave as though the options
+.B \-mnprsv
+were specified.
+.TP
+.B \-m
+Print the machine hardware name
+.TP
+.B \-n
+Print the nodename (the nodename may be a name that the system is known by to a
+communications network).
+.TP
+.B \-p
+Print the machine processor architecture name.
+.TP
+.B \-r
+Print the operating system release.
+.TP
+.B \-s
+Print the operating system name.
+.TP
+.B \-v
+Print the operating system version.
+.PP
+If no options are specified,
+.I uname
+prints the operating system name as if the
+.B \-s
+option had been specified.
