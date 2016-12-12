@@ -35,7 +35,8 @@
 /* }}} */
 /* {{{ Commentary: */
 /*
- *
+ * This uses the kernel namelist to get at the kernel version, thus it
+ * absolutely *must* be setuid, sorry.
  */
 /* }}} */
 
@@ -47,13 +48,11 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <nlist.h>
+
 #include <sys/param.h>
 #include <sys/types.h>
-
-/*
- * This relies on a kernel to be configured and built.
- */
-#include <vers.c>
+#include <sys/file.h>
 
 /*
  * Guess the system name based on what preprocessor macros have been
@@ -74,10 +73,10 @@ static char *sysname =
 /* We get the node name and release at run time. */
 char nodename[MAXHOSTNAMELEN];
 char release[255];
+char version[255];
 
 /* Various buffers. */
 char *progname;
-char *nicevers;
 
 /* Option flags. */
 int uFlags = 0;
@@ -88,6 +87,15 @@ int uFlags = 0;
 #define UTS_VERSION   8                 /* Kernel version.        */
 #define UTS_MACHINE   16                /* Machine type.          */
 #define UTS_ARCH      32                /* Architecture.          */
+
+/* Namelist indices. */
+#define KERNEL_VERSION    0
+
+/* Kernel namelists. */
+struct nlist knl[] = {
+  { "_version" },
+  { 0 }
+};
 
 /*
  * Display usage information and exit.
@@ -123,43 +131,38 @@ get_hostname()
 }
 
 /*
- * Strip any newlines from the kernel version string.
+ * Get version from kernel namelist and compute version and release.
  */
-get_nice_version()
+get_kernel_version()
 {
-  size_t idx = 0;
-  size_t len = strlen(version);
+  size_t  idx  = 0;
+  size_t  len  = 255;
+  int     kmem = -1;
+  char   *p    = NULL;
 
-  nicevers = (char *)malloc(sizeof(char) * len);
-  if (nicevers == NULL) {
-    perror("malloc");
+  extern char *index();
+
+  memset(version, 0, len);
+
+  nlist("/vmunix", knl);
+  if (knl[0].n_type == 0) {
+    fprintf(stderr, "No /vmunix namelist!\n");
     exit(1);
   }
 
-  for (idx = 0; idx < (len - 1); idx++) {
-    if (version[idx] == '\0') {
-      nicevers[idx] = '\0';
-      break;
-    }
-
-    if (version[idx] != '\n') {
-      nicevers[idx] = version[idx];
-    }
+  if ((kmem = open("/dev/kmem", 0)) < 0) {
+    perror("opening /dev/kmem");
+    exit(1);
   }
-}
 
-/*
- * Get the system version.
- *
- * NB:  This has to parse the version string from `vers.c`.
- */
-get_system()
-{
-  size_t idx = 0;
-  size_t len = strlen(version);
+  lseek(kmem, (long)knl[KERNEL_VERSION].n_value, L_SET);
+  read(kmem, &version, len);
 
-  for (idx = 0; idx < len; idx++) {
-    
+  if ((p = index(version, '\n')) != NULL) {
+    *p = ' ';
+  }
+
+  for (idx = 0; idx < len; idx++) {  
     /* Release version should match \d.\d */
     if (isdigit(version[idx])     &&
         version[idx + 1] == '.'   &&
@@ -179,7 +182,7 @@ main(argc, argv)
      char **argv;                       /* Argument value array. */
 {
   progname = argv[0];
-  uFlags   = 0;
+  uFlags = 0;
 
   while (--argc > 0 && **(++argv) == '-') {
     while (*(++(*argv))) {
@@ -217,15 +220,14 @@ main(argc, argv)
   }
 
   /* Get information. */
-  get_nice_version();
   get_hostname();
-  get_system();
+  get_kernel_version();
 
   /* Print what needs to be printed. */
   print_element(UTS_SYSNAME,  sysname);
   print_element(UTS_NODENAME, nodename);
   print_element(UTS_RELEASE,  release);
-  print_element(UTS_VERSION,  nicevers);
+  print_element(UTS_VERSION,  version);
   print_element(UTS_MACHINE,  MACHINE);
   print_element(UTS_ARCH,     MACHINE);
 

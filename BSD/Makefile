@@ -35,14 +35,11 @@
 #
 #}}}
 
-# Location of the kernel from which a version string is obtained.
-KERNEL=		/usr/src/sys/KELVIN
-
 # Destination path for binaries.
 DESTDIR=	/usr
 
 # C compiler flags.
-CFLAGS=		-O3 -I${KERNEL}
+CFLAGS=		-O3
 
 SRCS=			uname.c
 BIN=			uname
@@ -52,10 +49,9 @@ ${BIN}:
 
 install:
 	for foo in ${BIN}; do strip ${foo}; done
-	install -o bin -g bin -m 755 ${BIN} ${DESTDIR}/bin
+	install -o root -g bin -m 4755 ${BIN} ${DESTDIR}/bin
 
 clean:
 	rm -f ${BIN} a.out core *.s *.o errs
-
 
 # Makefile ends here.
