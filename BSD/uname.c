@@ -136,10 +136,13 @@ get_nice_version()
     exit(1);
   }
 
-  for (idx = 0; idx < len; idx++) {
-    if (version[idx] == '\n') {
-      nicevers[idx] = ' ';
-    } else {
+  for (idx = 0; idx < (len - 1); idx++) {
+    if (version[idx] == '\0') {
+      nicevers[idx] = '\0';
+      break;
+    }
+
+    if (version[idx] != '\n') {
       nicevers[idx] = version[idx];
     }
   }

@@ -1,6 +1,6 @@
 # -*- Mode: Makefile -*-
 #
-# Markfile --- Herp.
+# Makefile --- BSD hacks makefile.
 #
 # Copyright (c) 2016 Paul Ward <asmodai@gmail.com>
 #
@@ -58,4 +58,4 @@ clean:
 	rm -f ${BIN} a.out core *.s *.o errs
 
 
-# Markfile ends here.
+# Makefile ends here.
