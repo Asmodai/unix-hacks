@@ -158,7 +158,7 @@ get_kernel_version()
   lseek(kmem, (long)knl[KERNEL_VERSION].n_value, L_SET);
   read(kmem, &version, len);
 
-  if ((p = index(version, '\n')) != NULL) {
+  while ((p = index(version, '\n')) != NULL) {
     *p = ' ';
   }
 
